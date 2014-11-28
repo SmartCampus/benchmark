@@ -7,17 +7,16 @@ import org.smartcampus.simulation.stdlib.sensors.RandomSensorTransformation;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
-import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Test {
+public class Benchmark {
 
     protected List<Simulation> simulations;
 
-    public Test() {
+    public Benchmark() {
         simulations = new ArrayList<Simulation>();
     }
 
@@ -49,7 +48,7 @@ public class Test {
 
     }
 
-    protected Result simulate() {
+    protected BenchmarkResults simulate() {
         for (Simulation s : simulations) {
             launchSimulation(s);
         }
@@ -59,22 +58,26 @@ public class Test {
             analysers.add(a);
             a.start(); // start thread
         }
+        BenchmarkResults res = new BenchmarkResults();
         for (ResultsAnalyser a : analysers) {
             try {
                 a.join();
                 System.out.println("THREAD for " + a.getSimulation().getName() + "finished");
+                res.addSimulationResult(a.getResult());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("DONE");
-        return null;
+        System.out.println("ALL THREADS FINISHED");
+        res.analyzeValues();
+        return res;
     }
 
     public static void main(String[] args) {
-        Test t = new Test();
-        t.addSimulation(1, "S1", System.currentTimeMillis(), Duration.create(1, TimeUnit.SECONDS),
-                Duration.create(1, TimeUnit.SECONDS), Duration.create(2, TimeUnit.SECONDS));
-        t.simulate();
+        Benchmark t = new Benchmark();
+        t.addSimulation(200, "S1", System.currentTimeMillis(), Duration.create(10, TimeUnit.SECONDS),
+                Duration.create(1, TimeUnit.SECONDS), Duration.create(1, TimeUnit.SECONDS));
+        BenchmarkResults res = t.simulate();
+        ResultsPrinter.printResults(res);
     }
 }

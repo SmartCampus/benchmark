@@ -25,7 +25,7 @@ public class SensorValues {
         return values;
     }
 
-    public void setValues(Map<Long, String> values) {
-        this.values = values;
+    public int getNbValues(){
+        return values.size();
     }
 }

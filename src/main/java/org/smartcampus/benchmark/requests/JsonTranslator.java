@@ -6,7 +6,8 @@ import org.json.JSONObject;
 
 public class JsonTranslator {
 
-    public static SensorValues readResults(JSONObject json) throws JSONException{
+    public static SensorValues readResults(String string) throws JSONException{
+        JSONObject json = new JSONObject(string);
         SensorValues s = new SensorValues(json.getString("id"));
         JSONArray array = json.getJSONArray("values");
         for (int i = 0; i < array.length(); i++) {

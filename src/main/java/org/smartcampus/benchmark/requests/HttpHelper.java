@@ -29,16 +29,14 @@ public class HttpHelper {
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public static SensorValues getSensorValues(String sensorId, long start, long end) throws BenchmarkException {
+    public static String getSensorValues(String sensorId, long start, long end) throws BenchmarkException {
         HttpClient client = new DefaultHttpClient();
         List<BasicNameValuePair> params = new LinkedList<BasicNameValuePair>();
         String dates = sdf.format(getDateFromTimestamp(start)) + "/" + sdf.format(getDateFromTimestamp
                 (end));
-        System.out.println("START "+sdf.format(getDateFromTimestamp(start)));
-        System.out.println("END "+end);
         params.add(new BasicNameValuePair("date", dates));
         String p = URLEncodedUtils.format(params, "utf-8");
-        HttpGet request = new HttpGet(url + sensorId+ "-0/data?"+p);
+        HttpGet request = new HttpGet(url + sensorId+ "/data?"+p);
         HttpResponse response = null;
         try {
             response = client.execute(request);
@@ -48,12 +46,8 @@ public class HttpHelper {
             while ((line = rd.readLine()) != null) {
                 text +=line;
             }
-            System.out.println(text);
-            return JsonTranslator.readResults(new JSONObject(text));
+            return text;
         } catch (IOException e) {
-            //TODO create good exception
-            throw new BenchmarkException();
-        } catch (JSONException e) {
             //TODO create good exception
             throw new BenchmarkException();
         }
