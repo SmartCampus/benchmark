@@ -4,13 +4,11 @@ import org.smartcampus.simulation.framework.fluentapi.StartImpl;
 import org.smartcampus.simulation.framework.fluentapi.simulation.SimulationLawWrapper1;
 import org.smartcampus.simulation.smartcampus.simulation.ParkingSimulation;
 import org.smartcampus.simulation.stdlib.sensors.RandomSensorTransformation;
-import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Benchmark {
 
@@ -44,16 +42,10 @@ public class Benchmark {
                 .frequency(s.getFrequency()).startRealTimeSimulationAt(s.getStart());
     }
 
-    private void getResults(Simulation s) {
-
-    }
-
-    protected BenchmarkResults simulate() {
-        for (Simulation s : simulations) {
-            launchSimulation(s);
-        }
+    public BenchmarkResults simulate() {
         List<ResultsAnalyser> analysers = new LinkedList<ResultsAnalyser>();
         for (Simulation s : simulations) {
+            launchSimulation(s);
             ResultsAnalyser a = new ResultsAnalyser(s);
             analysers.add(a);
             a.start(); // start thread
@@ -62,7 +54,7 @@ public class Benchmark {
         for (ResultsAnalyser a : analysers) {
             try {
                 a.join();
-                System.out.println("THREAD for " + a.getSimulation().getName() + "finished");
+                System.out.println("THREAD for " + a.getSimulation().getName() + " finished");
                 res.addSimulationResult(a.getResult());
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -73,11 +65,4 @@ public class Benchmark {
         return res;
     }
 
-    public static void main(String[] args) {
-        Benchmark t = new Benchmark();
-        t.addSimulation(200, "S1", System.currentTimeMillis(), Duration.create(10, TimeUnit.SECONDS),
-                Duration.create(1, TimeUnit.SECONDS), Duration.create(1, TimeUnit.SECONDS));
-        BenchmarkResults res = t.simulate();
-        ResultsPrinter.printResults(res);
-    }
 }
