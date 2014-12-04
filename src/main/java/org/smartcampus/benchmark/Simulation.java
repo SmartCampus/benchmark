@@ -7,18 +7,31 @@ public class Simulation {
     private int sensors;
     private String name;
     private long start;
-    private FiniteDuration duration;
-    private FiniteDuration frequency;
-    private FiniteDuration objective;
+    private long duration;
+    private long frequency;
+    private long objective;
+    private boolean virtual;
+    private boolean onEvent;
 
-    public Simulation(int sensors, String name, long start, FiniteDuration duration, FiniteDuration frequency,
-                      FiniteDuration objective) {
+    public Simulation(int sensors, String name, long start, long duration, long frequency,
+                      long objective, boolean virtual, boolean onEvent) {
         this.sensors = sensors;
         this.name = name;
         this.start = start;
         this.duration = duration;
         this.frequency = frequency;
         this.objective = objective;
+        this.virtual = virtual;
+        this.onEvent = onEvent;
+    }
+
+    public Simulation(int sensors, String name, long start, long duration, long frequency,
+                      long objective) {
+        this(sensors, name, start, duration, frequency, objective, false, false);
+    }
+
+    public Simulation(int sensors, String s1, long start, FiniteDuration duration, FiniteDuration frequency, FiniteDuration objective) {
+        this(sensors, s1, start, duration.toMillis(), frequency.toMillis(), objective.toMillis());
     }
 
     public int getSensors() {
@@ -33,27 +46,31 @@ public class Simulation {
         return start;
     }
 
-    public void setStart(long start) {
-        this.start = start;
-    }
-
-    public FiniteDuration getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public FiniteDuration getFrequency() {
+    public long getFrequency() {
         return frequency;
     }
 
-    public FiniteDuration getObjective() {
+    public long getObjective() {
         return objective;
     }
 
     public int getSentValues() {
-        return (int) (duration.div(frequency)) * sensors;
+        return (int) (duration / frequency) * sensors;
     }
 
     public long getEndTimestamp() {
-        return start + duration.toMillis();
+        return start + duration;
+    }
+
+    public boolean isVirtual() {
+        return virtual;
+    }
+
+    public boolean isOnEvent() {
+        return onEvent;
     }
 }

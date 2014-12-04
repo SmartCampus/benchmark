@@ -1,10 +1,6 @@
 package org.smartcampus.benchmark;
 
-import org.smartcampus.simulation.framework.fluentapi.StartImpl;
-import org.smartcampus.simulation.framework.fluentapi.simulation.SimulationLawWrapper1;
-import org.smartcampus.simulation.smartcampus.simulation.ParkingSimulation;
-import org.smartcampus.simulation.stdlib.sensors.RandomSensorTransformation;
-import scala.concurrent.duration.FiniteDuration;
+import org.smartcampus.benchmark.requests.HttpHelper;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,43 +8,28 @@ import java.util.List;
 
 public class Benchmark {
 
+    private static String[] simulationServicesIps = {"54.154.0.81", "54.154.27.229"};
     protected List<Simulation> simulations;
+    private int i = 0;
 
     public Benchmark() {
         simulations = new ArrayList<Simulation>();
     }
 
-    public void addSimulation(int sensors, String name, long start, FiniteDuration duration, FiniteDuration frequency,
-                              FiniteDuration objective) {
-        simulations.add(new Simulation(sensors, name, start, duration, frequency, objective));
-    }
-
-    private void launchSimulation(Simulation s) {
-        SimulationLawWrapper1 simulation;
-        if (s instanceof EventSimulation) {
-            simulation = new StartImpl()
-                    .createSimulation(s.getName(), ParkingSimulation.class)
-                    .withSensors(s.getSensors(), new RandomSensorTransformation());
-        } else {
-            simulation = new StartImpl()
-                    .createSimulation(s.getName(), ParkingSimulation.class)
-                    .withSensors(s.getSensors(), new RandomSensorTransformation());
-        }
-        simulation
-                .withLaw(null)
-                .setOutput("http://54.229.14.230:8080/collector/value")
-                .startAt(s.getStart())
-                .duration(s.getDuration())
-                .frequency(s.getFrequency()).startRealTimeSimulationAt(s.getStart());
+    public void addSimulation(Simulation simulation) {
+        this.simulations.add(simulation);
     }
 
     public BenchmarkResults simulate() {
         List<ResultsAnalyser> analysers = new LinkedList<ResultsAnalyser>();
         for (Simulation s : simulations) {
-            launchSimulation(s);
-            ResultsAnalyser a = new ResultsAnalyser(s);
-            analysers.add(a);
-            a.start(); // start thread
+            if (HttpHelper.launchSimulation(s, simulationServicesIps[(i++ % simulationServicesIps.length)])) {
+                ResultsAnalyser a = new ResultsAnalyser(s);
+                analysers.add(a);
+                a.start(); // start thread
+            } else {
+                System.out.println("ERREUR LAUNCHING SIMULATION FOR " + s.getName());
+            }
         }
         BenchmarkResults res = new BenchmarkResults();
         for (ResultsAnalyser a : analysers) {

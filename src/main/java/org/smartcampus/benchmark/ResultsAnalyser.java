@@ -20,7 +20,7 @@ public class ResultsAnalyser extends Thread {
     public void run() {
         System.out.println("THREAD for simulation " + simulation.getName() + " STARTED");
         try {
-            sleep(simulation.getDuration().toMillis() + simulation.getObjective().toMillis());
+            sleep(simulation.getDuration() + simulation.getObjective());
             System.out.println("FINI DODO for simulation " + simulation.getName());
             int j = 0; int received=0;
             for (int i = 0; i < simulation.getSensors(); i += 50) {
