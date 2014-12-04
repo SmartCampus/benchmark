@@ -22,16 +22,19 @@ public class ResultsAnalyser extends Thread {
         try {
             sleep(simulation.getDuration() + simulation.getObjective());
             System.out.println("FINI DODO for simulation " + simulation.getName());
-            int j = 0; int received=0;
+            int j = 0;
+            int received = 0;
             for (int i = 0; i < simulation.getSensors(); i += 50) {
                 j++;
-                String response = HttpHelper.getSensorValues(simulation.getName() + "-" + i, simulation.getStart(),
+                String sensor = simulation.getName() + "_" + i;
+                if (simulation.isVirtual()) sensor += "V";
+                String response = HttpHelper.getSensorValues(sensor, simulation.getStart(),
                         simulation.getEndTimestamp());
                 SensorValues v = JsonTranslator.readResults(response);
-                received+=v.getNbValues();
+                received += v.getNbValues();
                 System.out.println("RECU " + v.getNbValues() + " FOR SENSOR " + v.getName());
             }
-            result.setAwaitedValues(j*simulation.getSensors());
+            result.setAwaitedValues(j * simulation.getSensors());
             result.setGotValues(received);
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -18,7 +18,7 @@ public class ScenarioRunner {
         scenarios = new HashMap<SCENARIOS, Benchmark>();
         Benchmark b1 = new Benchmark();
         b1.addSimulation(new Simulation(1, "S1", System.currentTimeMillis(), Duration.create(1, TimeUnit.SECONDS),
-                Duration.create(1, TimeUnit.SECONDS), Duration.create(15, TimeUnit.SECONDS)));
+                Duration.create(1, TimeUnit.SECONDS), Duration.create(5, TimeUnit.SECONDS)));
         scenarios.put(SCENARIOS.SCENARIO1, b1);
         Benchmark b2 = new Benchmark();
         b1.addSimulation(new Simulation(200, "S2", System.currentTimeMillis(), Duration.create(1, TimeUnit.SECONDS),
