@@ -19,22 +19,32 @@ public class ResultsAnalyser extends Thread {
     @Override
     public void run() {
         System.out.println("THREAD for simulation " + simulation.getName() + " STARTED");
+        long wait = simulation.getEndTimestamp() + simulation.getObjective() - System.currentTimeMillis();
         try {
-            sleep(simulation.getDuration() + simulation.getObjective());
-            System.out.println("FINI DODO for simulation " + simulation.getName());
+            sleep(wait > 0 ? wait : 0);
+            System.out.println("FINI DODO for simulation " + simulation.getName() + " (time " + System.currentTimeMillis() + ")");
             int j = 0;
             int received = 0;
-            for (int i = 0; i < simulation.getSensors(); i += 50) {
+            //query answers
+            long then = System.currentTimeMillis();
+            for (int i = 0; i < simulation.getSensors(); i += 25) {
                 j++;
                 String sensor = simulation.getName() + "_" + i;
                 if (simulation.isVirtual()) sensor += "V";
                 String response = HttpHelper.getSensorValues(sensor, simulation.getStart(),
                         simulation.getEndTimestamp());
                 SensorValues v = JsonTranslator.readResults(response);
-                received += v.getNbValues();
-                System.out.println("RECU " + v.getNbValues() + " FOR SENSOR " + v.getName());
+                if (v != null) {
+                    received += v.getNbValues();
+                    System.out.println("RECU " + v.getNbValues() + "/" + simulation.getSentValues() / simulation.getSensors() + " FOR SENSOR " + v.getName());
+                } else {
+                    System.out.println("Invalid Sensor " + sensor);
+                }
             }
-            result.setAwaitedValues(j * simulation.getSensors());
+            long now = System.currentTimeMillis();
+            System.out.println("GOT RESPONSES FOR IN " + (now - then) + " ms (" + simulation.getName() + ")");
+            //answers got
+            result.setAwaitedValues(j * (int) (simulation.getDuration() / simulation.getFrequency()));
             result.setGotValues(received);
         } catch (InterruptedException e) {
             e.printStackTrace();

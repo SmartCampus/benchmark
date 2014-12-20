@@ -23,7 +23,7 @@ import java.util.TimeZone;
 public class HttpHelper {
 
     static SimpleDateFormat sdf;
-    static String dataApiUrl = "http://54.229.14.230:8081/data-api/sensors/";
+    static String dataApiUrl = "http://54.154.3.158:8081/data-api/sensors/";
     static String simulationServiceUrl = ":8080/smartcampus/simulations/simulation";
     static String simulationServiceEventUrl = ":8080/smartcampus/simulations/eventsimulation";
 
@@ -42,6 +42,7 @@ public class HttpHelper {
                 (end));
         params.add(new BasicNameValuePair("date", dates));
         String p = URLEncodedUtils.format(params, "utf-8");
+        System.out.println(dataApiUrl + sensorId + "/data?" + p);
         HttpGet request = new HttpGet(dataApiUrl + sensorId + "/data?" + p);
         HttpResponse response = null;
         try {
@@ -54,6 +55,7 @@ public class HttpHelper {
             }
             return text;
         } catch (IOException e) {
+            e.printStackTrace();
             //TODO create good exception
             throw new BenchmarkException();
         }
@@ -62,8 +64,10 @@ public class HttpHelper {
     /**
      * Launch simulation at given ip
      */
-    public static boolean launchSimulation(Simulation s, String ip) {
-        System.out.println("LAUNCHING SIMULATION " + s.getName() + " AT SERVER " + ip);
+    public static boolean launchSimulation(Simulation s, String ip, String middleware_ip) {
+        long timeStamp = System.currentTimeMillis();
+        s.setStart(timeStamp+3000);
+        System.out.println("LAUNCHING SIMULATION " + s.getName() + " AT SERVER " + ip + " (time " + timeStamp + ")");
         JSONObject json = new JSONObject();
         json.put("name", s.getName());
         json.put("duration", s.getDuration());
@@ -71,6 +75,7 @@ public class HttpHelper {
         json.put("start", s.getStart());
         json.put("sensors", s.getSensors());
         json.put("virtual", s.isVirtual());
+        json.put("ip", middleware_ip);
 
         String url = s.isOnEvent() ? simulationServiceEventUrl : simulationServiceUrl;
 
@@ -88,7 +93,7 @@ public class HttpHelper {
     }
 
     public static Date getDateFromTimestamp(long timestamp) {
-        return new Date(timestamp * 1000);
+        return new Date(timestamp);
     }
 
 }
