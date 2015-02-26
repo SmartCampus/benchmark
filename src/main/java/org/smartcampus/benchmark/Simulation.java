@@ -7,17 +7,18 @@ public class Simulation {
     private int sensors;
     private String name;
     private long start;
+    private long startOffset;
     private long duration;
     private long frequency;
     private long objective;
     private boolean virtual;
     private boolean onEvent;
 
-    public Simulation(int sensors, String name, long start, long duration, long frequency,
+    public Simulation(int sensors, String name, long startOffset, long duration, long frequency,
                       long objective, boolean virtual, boolean onEvent) {
         this.sensors = sensors;
         this.name = name;
-        this.start = start;
+        this.startOffset = startOffset;
         this.duration = duration;
         this.frequency = frequency;
         this.objective = objective;
@@ -25,13 +26,17 @@ public class Simulation {
         this.onEvent = onEvent;
     }
 
-    public Simulation(int sensors, String name, long start, long duration, long frequency,
+    public Simulation(int sensors, String name, long startOffset, long duration, long frequency,
                       long objective) {
-        this(sensors, name, start, duration, frequency, objective, false, false);
+        this(sensors, name, startOffset, duration, frequency, objective, false, false);
     }
 
-    public Simulation(int sensors, String s1, long start, FiniteDuration duration, FiniteDuration frequency, FiniteDuration objective) {
-        this(sensors, s1, start, duration.toMillis(), frequency.toMillis(), objective.toMillis());
+    public Simulation(int sensors, String s1, long startOffset, FiniteDuration duration, FiniteDuration frequency, FiniteDuration objective) {
+        this(sensors, s1, startOffset, duration, frequency, objective, false, false);
+    }
+
+    public Simulation(int sensors, String s1, long startOffset, FiniteDuration duration, FiniteDuration frequency, FiniteDuration objective, boolean virtual, boolean onEvent) {
+        this(sensors, s1, startOffset, duration.toMillis(), frequency.toMillis(), objective.toMillis(), virtual, onEvent);
     }
 
     public int getSensors() {
@@ -63,7 +68,9 @@ public class Simulation {
     }
 
     public long getEndTimestamp() {
-        return start + duration;
+        if (frequency >= duration) return start;
+        long leftTime = duration % frequency + 1000;
+        return (start + duration - leftTime) > 0 ? start + duration - leftTime : start + duration;
     }
 
     public boolean isVirtual() {
@@ -72,5 +79,9 @@ public class Simulation {
 
     public boolean isOnEvent() {
         return onEvent;
+    }
+
+    public void setStart(long start) {
+        this.start = (startOffset > 0) ? start + startOffset : start;
     }
 }

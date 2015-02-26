@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Benchmark {
 
-    private static String[] simulationServicesIps = {"54.154.0.81", "54.154.27.229"};
+    private static String[] simulationServicesIps = {"52.16.84.68", "52.16.14.213", "52.16.91.166", "52.16.35.130", "52.16.85.114"};
     protected List<Simulation> simulations;
     private int i = 0;
 
@@ -20,15 +20,15 @@ public class Benchmark {
         this.simulations.add(simulation);
     }
 
-    public BenchmarkResults simulate() {
+    public BenchmarkResults simulate(String middleware_ip) {
         List<ResultsAnalyser> analysers = new LinkedList<ResultsAnalyser>();
         for (Simulation s : simulations) {
-            if (HttpHelper.launchSimulation(s, simulationServicesIps[(i++ % simulationServicesIps.length)])) {
-                ResultsAnalyser a = new ResultsAnalyser(s);
+            if (HttpHelper.launchSimulation(s, simulationServicesIps[(i++ % simulationServicesIps.length)], middleware_ip)) {
+                ResultsAnalyser a = new ResultsAnalyser(s,middleware_ip);
                 analysers.add(a);
-                a.start(); // start thread
+                a.start(); //start thread
             } else {
-                System.out.println("ERREUR LAUNCHING SIMULATION FOR " + s.getName());
+                System.out.println("ERREUR LAUNCHING SIMULATION FOR " + s.getName() + (s.isVirtual() ? "(Virtual)" : ""));
             }
         }
         BenchmarkResults res = new BenchmarkResults();

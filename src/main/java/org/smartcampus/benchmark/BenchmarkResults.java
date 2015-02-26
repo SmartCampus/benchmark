@@ -58,11 +58,18 @@ public class BenchmarkResults {
             sentValues += r.getTotalSentValues();
             startTime = Math.min(startTime, s.getStart());
             endTime = Math.max(endTime, s.getEndTimestamp());
-            received += (double)r.getGotValues() / r.getAwaitedValues() * r.getTotalSentValues();
+            received += (double) r.getGotValues() / r.getAwaitedValues() * r.getTotalSentValues();
         }
         totalDuration = Duration.create(endTime - startTime, TimeUnit.MILLISECONDS);
-        meanSendFrequency = Duration.create(nbSensors * totalDuration.toMillis() / sentValues, TimeUnit.MILLISECONDS);
-        receivedRate = received / sentValues;
+        if (totalDuration.equals(Duration.create(0, TimeUnit.MILLISECONDS)))
+            totalDuration = Duration.create(1, TimeUnit.SECONDS);
+        if (sentValues == 0) {
+            meanSendFrequency = Duration.create(0, TimeUnit.MILLISECONDS);
+            receivedRate = 0;
+        } else {
+            meanSendFrequency = Duration.create(nbSensors * totalDuration.toMillis() / sentValues, TimeUnit.MILLISECONDS);
+            receivedRate = received / sentValues;
+        }
     }
 
 }
