@@ -64,8 +64,8 @@ public class BenchmarkResultsTest {
         res1.analyzeValues();
         assertEquals(1, res1.getSentValues());
         assertEquals(1, res1.getNbSensors());
-        assertEquals(Duration.create(1000, TimeUnit.MILLISECONDS), res1.getTotalDuration());
-        assertEquals(Duration.create(1000, TimeUnit.MILLISECONDS), res1.getMeanSendFrequency());
+        assertEquals(Duration.create(1, TimeUnit.SECONDS), res1.getTotalDuration());
+        assertEquals(Duration.create(1, TimeUnit.SECONDS), res1.getMeanSendFrequency());
         assertEquals(1, res1.getReceivedRate(), 0.0001);
         // bench 2
         res2.analyzeValues();

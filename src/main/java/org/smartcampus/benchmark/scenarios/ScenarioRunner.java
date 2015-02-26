@@ -18,7 +18,8 @@ public class ScenarioRunner {
 
     public ScenarioRunner() {
         scenarios = new HashMap<SCENARIOS, Benchmark>();
-        FiniteDuration duration = Duration.create(2, TimeUnit.MINUTES);
+        FiniteDuration duration = Duration.create(5, TimeUnit.MINUTES);
+
         Benchmark b1 = new Benchmark();
         b1.addSimulation(new Simulation(176, "Parking1", 5000, duration.toMillis(),
                 60 * 1000, 1000));
