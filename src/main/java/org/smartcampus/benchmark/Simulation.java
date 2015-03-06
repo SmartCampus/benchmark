@@ -2,6 +2,18 @@ package org.smartcampus.benchmark;
 
 import scala.concurrent.duration.FiniteDuration;
 
+/**
+ * Used to store configuration of the simulations we want to launch
+ * Available parameters :
+ * - number of sensors
+ * - name of the sensors group (sensors named NAME_0, NAME_1, etc. have to be defined in the smartcampus sensors database)
+ * - the offset wished at the the start of the simulation
+ * - the duration of the simulation
+ * - the period at which data is sent
+ * - the duration we want to wait after the simulation to query the database
+ * - whether we will query for virtual of physical data (if virtual,  NAME_0V, NAME_1V, etc. have to be defined in the SmartCampus sensors database)
+ * - whether the sensors send data each period or only when its value changes
+ */
 public class Simulation {
 
     private int sensors;
@@ -64,7 +76,8 @@ public class Simulation {
     }
 
     public int getSentValues() {
-        return (int) (duration / frequency) * sensors;
+        int res = (int) (duration / frequency) * sensors;
+        return res > 0 ? res : 1;
     }
 
     public long getEndTimestamp() {

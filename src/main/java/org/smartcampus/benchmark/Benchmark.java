@@ -6,9 +6,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Describe a benchmark
+ * A benchmark is composed of a number of simulations.
+ * When launched, the benchmark starts the simulations and then gets their results.
+ */
 public class Benchmark {
 
-    private static String[] simulationServicesIps = {"52.16.84.68", "52.16.14.213", "52.16.91.166", "52.16.35.130", "52.16.85.114"};
+    private static String[] simulationServicesIps = {"localhost"};
     protected List<Simulation> simulations;
     private int i = 0;
 
@@ -24,7 +29,7 @@ public class Benchmark {
         List<ResultsAnalyser> analysers = new LinkedList<ResultsAnalyser>();
         for (Simulation s : simulations) {
             if (HttpHelper.launchSimulation(s, simulationServicesIps[(i++ % simulationServicesIps.length)], middleware_ip)) {
-                ResultsAnalyser a = new ResultsAnalyser(s,middleware_ip);
+                ResultsAnalyser a = new ResultsAnalyser(s, middleware_ip);
                 analysers.add(a);
                 a.start(); //start thread
             } else {

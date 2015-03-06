@@ -4,10 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Tool class used to translate json data received from the Data-API
+ */
 public class JsonTranslator {
 
-    public static SensorValues readResults(String string) throws JSONException{
-        if(string.startsWith("Error")) {
+    public static SensorValues readResults(String string) throws JSONException {
+        if (string.startsWith("Error")) {
             return null;
         }
         JSONObject json = new JSONObject(string);

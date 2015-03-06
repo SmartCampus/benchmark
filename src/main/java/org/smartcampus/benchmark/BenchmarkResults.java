@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Stores the results of a full benchmark
+ */
 public class BenchmarkResults {
 
     private int nbSensors = 0;

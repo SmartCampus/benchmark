@@ -20,6 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
+/**
+ * Tool class used to query SmartCampus' DATA API and simulation services
+ */
 public class HttpHelper {
 
     static SimpleDateFormat sdf;
@@ -43,6 +46,7 @@ public class HttpHelper {
         params.add(new BasicNameValuePair("date", dates));
         String p = URLEncodedUtils.format(params, "utf-8");
         HttpGet request = new HttpGet("http://" + ip + dataApiUrl + sensorId + "/data?" + p);
+        System.out.println("http://" + ip + dataApiUrl + sensorId + "/data?" + p);
         HttpResponse response = null;
         try {
             response = client.execute(request);

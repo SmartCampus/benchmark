@@ -3,10 +3,13 @@ package org.smartcampus.benchmark.requests;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Stores values gotten from the data api for a given sensor
+ */
 public class SensorValues {
 
-    private String name;
-    private Map<Long, String> values;
+    private String name; //sensor name
+    private Map<Long, String> values; //associates timestamp with the value
 
     public SensorValues(String name) {
         this.name = name;

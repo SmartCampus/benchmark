@@ -6,6 +6,11 @@ import org.smartcampus.benchmark.requests.HttpHelper;
 import org.smartcampus.benchmark.requests.JsonTranslator;
 import org.smartcampus.benchmark.requests.SensorValues;
 
+/**
+ * Thread used to query SmartCampus Data-API for data sent during a given simulation
+ * The thread is launched when the request is sent to the simulator, and waits until the simulation is
+ * finished to query the Data API. It then stores the results of the suery
+ */
 public class ResultsAnalyser extends Thread {
 
     private String middleware_ip;
@@ -44,7 +49,7 @@ public class ResultsAnalyser extends Thread {
                 }
             }
             long now = System.currentTimeMillis();
-            System.out.println("GOT RESPONSES FOR " + simulation.getName() + " IN" + (now - then) + "ms");
+            System.out.println("GOT RESPONSES FOR " + simulation.getName() + " IN " + (now - then) + "ms");
             //answers got
             result.setAwaitedValues(j * (int) (simulation.getDuration() / simulation.getFrequency()));
             result.setGotValues(received);
